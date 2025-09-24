@@ -1,3 +1,4 @@
+import { secureSet, secureGet, secureDelete } from '../security/secureStorage';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, Alert, TouchableOpacity } from 'react-native';
 import BabyGrowthSlider from '../Components/BabyGrowth/BabyGrowthSlider';

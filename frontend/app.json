@@ -26,10 +26,8 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
       ],
-
       "allowBackup": false,
       "usesCleartextTraffic": false,
-
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDpwy79IM6EjuRUy0-lpf3wrkkfRvjuGsk"
@@ -47,7 +45,8 @@
           "locationAlwaysAndWhenInUsePermission": "Allow my-app to use your location."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

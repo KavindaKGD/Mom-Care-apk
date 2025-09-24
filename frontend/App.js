@@ -1,3 +1,4 @@
+import { secureSet, secureGet, secureDelete } from './App/security/secureStorage';
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator , StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -40,6 +41,29 @@ const OnboardingFlow = () => (
   </Stack.Navigator>
 );
 
+// sensitive keys you used AsyncStorage for before
+const LEGACY_SENSITIVE_KEYS = ['auth', 'accessToken', 'refreshToken'];
+
+async function migrateSensitiveKeys() {
+  for (const key of LEGACY_SENSITIVE_KEYS) {
+    const legacy = await AsyncStorage.getItem(key);
+    if (!legacy) continue;
+
+    try {
+      let parsed;
+      try { parsed = JSON.parse(legacy); }
+      catch { parsed = { value: legacy }; }
+
+      await secureSet(key, parsed);
+      await AsyncStorage.removeItem(key);
+
+      console.log(`migrated ${key} → SecureStore`);
+    } catch (e) {
+      console.warn(`migration failed for ${key}`, e);
+    }
+  }
+}
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
@@ -56,28 +80,36 @@ const App = () => {
   });
 
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        const onboardingStatus = await AsyncStorage.getItem('hasCompletedOnboarding');
-        setHasCompletedOnboarding(onboardingStatus === 'true');
+  const initializeApp = async () => {
+    try {
+      // ✅ Step 1: migrate any sensitive keys from AsyncStorage → SecureStore
+      await migrateSensitiveKeys();
 
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
+      // ✅ Step 2: onboarding flag (non-sensitive) can stay in AsyncStorage
+      const onboardingStatus = await AsyncStorage.getItem('hasCompletedOnboarding');
+      setHasCompletedOnboarding(onboardingStatus === 'true');
 
-        let loc = await Location.getCurrentPositionAsync({});
-        setLocation(loc);
-      } catch (error) {
-        console.error('Error initializing app:', error);
-      } finally {
-        setIsLoading(false);
+      // ✅ Step 3: request location permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
       }
-    };
 
-    initializeApp();
-  }, []);
+      // ✅ Step 4: fetch location
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
+
+    } catch (error) {
+      console.error('Error initializing app:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  initializeApp();
+}, []);
+
 
   if (isLoading || !fontsLoaded) {
     return (
