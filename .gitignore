@@ -1,0 +1,41 @@
+# 2) Create a solid .gitignore so Gradle/Node build junk is not tracked
+@"
+# ---- General ----
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.* 
+*.iml
+.idea/
+.vscode/
+
+# ---- Node/React ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+coverage/
+
+# ---- React Native / Android ----
+frontend/android/.gradle/
+frontend/android/.idea/
+frontend/android/local.properties
+frontend/android/**/build/
+frontend/android/**/.cxx/
+frontend/android/**/.externalNativeBuild/
+*.keystore
+*.jks
+*.apk
+*.aab
+
+# ---- iOS (if present) ----
+ios/Pods/
+ios/build/
+DerivedData/
+
+# ---- Misc ----
+*.swp
+*.swo
+"@ | Out-File -Encoding utf8 .gitignore
