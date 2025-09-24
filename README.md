@@ -53,5 +53,3 @@ https://www.youtube.com/watch?v=YourVideoID (10 minutes max: Describes vulnerabi
 4. Start the frontend: [Instructions for React Native/Expo, e.g., `expo start`]
 5. Test endpoints: Use Postman with Bearer token for authenticated routes.
 
-## License
-ISC
