@@ -10,6 +10,10 @@ Thumbs.db
 .idea/
 .vscode/
 
+# ---- expo ----
+.expo/
+.expo-shared/
+
 # ---- Node/React ----
 node_modules/
 npm-debug.log*
@@ -39,3 +43,7 @@ DerivedData/
 *.swp
 *.swo
 "@ | Out-File -Encoding utf8 .gitignore
+# Expo local state
+frontend/.expo/
+frontend/.expo-shared/
+
